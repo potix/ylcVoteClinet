@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ylcVoteClinet", "ylcVoteClinet\ylcVoteClinet.csproj", "{FD42ED21-569C-446D-8DB7-A8BE346692DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD42ED21-569C-446D-8DB7-A8BE346692DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD42ED21-569C-446D-8DB7-A8BE346692DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD42ED21-569C-446D-8DB7-A8BE346692DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD42ED21-569C-446D-8DB7-A8BE346692DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C723044B-A703-4EC8-8311-F685DEB053D9}
+	EndGlobalSection
+EndGlobal
