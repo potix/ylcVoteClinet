@@ -32,13 +32,15 @@ namespace ylcVoteClinet
 
         public int Duration { get; set; }
 
-        public string URI { get; set; }
+        public string Uri { get; set; }
 
         public bool IsInsecure { get; set; }
 
         public int Total { get; set; }
 
-        public Collection<VoteCount> Counts { get; set; }
+        public ICollection<VoteCount> Counts { get; set; }
+
+        public string BackgroundColor { get; set; }
 
         public Setting()
         {
@@ -50,10 +52,11 @@ namespace ylcVoteClinet
             TargetValues.Add(new TargetValue { Label = "owner and moderator", Target = Target.OwnerModerator });
             TargetValue = defaultTargetValue;
             Duration = 5;
-            URI = "http://127.0.0.1:12345";
+            Uri = "http://127.0.0.1:12345";
             IsInsecure = true;
             Total = 0;
             Counts = null;
+            BackgroundColor = "#FFFFFF";
         }
 
         public void Dump()

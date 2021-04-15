@@ -27,20 +27,21 @@ namespace ylcVoteClinet
 
     public partial class MainWindow : Window
     {
-        private Setting setting = new Setting();
-        private bool opened;
+        private Setting _setting = new Setting();
+        private bool _opened;
 
         public MainWindow()
         {
             InitializeComponent();
-            opened = false;
-            VideoIdTextBox.DataContext = setting;
-            ChoicesDataGrid.DataContext = setting;
-            TargetComboBox.DataContext = setting;
-            DurationSlider.DataContext = setting;
-            DurationLabel.DataContext = setting;
-            URITextBox.DataContext = setting;
-            InsecureCheckBox.DataContext = setting;
+            _opened = false;
+            VideoIdTextBox.DataContext = _setting;
+            ChoicesDataGrid.DataContext = _setting;
+            TargetComboBox.DataContext = _setting;
+            DurationSlider.DataContext = _setting;
+            DurationLabel.DataContext = _setting;
+            URITextBox.DataContext = _setting;
+            InsecureCheckBox.DataContext = _setting;
+            BackgroundColorTextBox.DataContext = _setting;
         }
 
         private void AddChoiceButtonClick(object sender, RoutedEventArgs e)
@@ -49,7 +50,7 @@ namespace ylcVoteClinet
             {
                 return;
             }
-            setting.ChoiceItems.Add(new ChoiceItem() { Choice = ChoicesTextBox.Text });
+            _setting.ChoiceItems.Add(new ChoiceItem() { Choice = ChoicesTextBox.Text });
         }
 
         private void ChoiceRemove(object sender, RoutedEventArgs e)
@@ -58,44 +59,65 @@ namespace ylcVoteClinet
             {
                 return;
             }
-            setting.ChoiceItems.Remove(setting.ChoiceItems[ChoicesDataGrid.SelectedIndex]);
+            _setting.ChoiceItems.Remove(_setting.ChoiceItems[ChoicesDataGrid.SelectedIndex]);
             ChoicesDataGrid.SelectedIndex = -1;
         }
 
 
         private async void OpenVote()
         {
-            if (opened)
+            if (_opened)
             {
                 return;
             }
-            if (setting.VideoId == null || setting.VideoId == "")
+            if (_setting.VideoId == null || _setting.VideoId == "")
             {
                 return;
             }
-            GrpcChannel channel = GrpcChannel.ForAddress(setting.URI);
-            ylcc.ylccClient client = new ylcc.ylccClient(channel);
-            YlccProtocol protocol = new YlccProtocol();
-            Collection<VoteChoice> choices = new Collection<VoteChoice>();
-            foreach (var choiceItem in setting.ChoiceItems) {
-                choices.Add(new VoteChoice() { Label = (choices.Count + 1).ToString(), Choice = choiceItem.Choice });
+            if (_setting.ChoiceItems.Count == 0)
+            {
+                return;
             }
-            OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(setting.VideoId, setting.TargetValue.Target, setting.Duration, choices);
-            OpenVoteResponse openVoteResponse = await client.OpenVoteAsync(openVoteRequest);
-            if (openVoteResponse.Status.Code != Code.Success)
+
+            try
+            {
+                if (_setting.IsInsecure)
+                {
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                }
+                GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
+                ylcc.ylccClient client = new ylcc.ylccClient(channel);
+                YlccProtocol protocol = new YlccProtocol();
+                Collection<VoteChoice> choices = new Collection<VoteChoice>();
+                foreach (var choiceItem in _setting.ChoiceItems) {
+                    choices.Add(new VoteChoice() { Label = (choices.Count + 1).ToString(), Choice = choiceItem.Choice });
+                }
+                OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(_setting.VideoId, _setting.TargetValue.Target, _setting.Duration, choices);
+                OpenVoteResponse openVoteResponse = await client.OpenVoteAsync(openVoteRequest);
+                if (openVoteResponse.Status.Code != Code.Success)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("通信エラー\n");
+                    sb.Append("URI:" + _setting.Uri + "\n");
+                    sb.Append("VideoId:" + _setting.VideoId + "\n");
+                    sb.Append("Reason:" + openVoteResponse.Status.Message + "\n");
+                    MessageBox.Show(sb.ToString());
+                    return;
+                }
+                _setting.VoteId = openVoteResponse.VoteId;
+            }
+            catch (Exception err)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("通信エラー\n");
-                sb.Append("URI:" + setting.URI + "\n");
-                sb.Append("VideoId:" + setting.VideoId + "\n");
-                sb.Append("Reason:" + openVoteResponse.Status.Message + "\n");
+                sb.Append("エラー\n");
+                sb.Append("URI:" + _setting.Uri + "\n");
+                sb.Append("VideoId:" + _setting.VideoId + "\n");
+                sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
-                this.Close();
                 return;
             }
-            setting.VoteId = openVoteResponse.VoteId;
-            opened = true;
-            ViewWindow viewWindow = new ViewWindow(setting);
+            _opened = true;
+            ViewWindow viewWindow = new ViewWindow(_setting);
             viewWindow.Closed += ViewWindowCloseEventHandler;
             viewWindow.Show();
         }
@@ -103,71 +125,102 @@ namespace ylcVoteClinet
         private void OpenVoteClick(object sender, RoutedEventArgs e)
         {
             OpenVote();
+
         }
 
         private async void UpdateVoteDurationClick()
         {
-            if (!opened)
+            if (!_opened)
             {
                 return;
             }
-            if (setting.VoteId == null || setting.VoteId == "")
+            if (_setting.VoteId == null || _setting.VoteId == "")
             {
                 return;
             }
-            GrpcChannel channel = GrpcChannel.ForAddress(setting.URI);
-            ylcc.ylccClient client = new ylcc.ylccClient(channel);
-            YlccProtocol protocol = new YlccProtocol();
-            UpdateVoteDurationRequest updateVoteDurationRequest = protocol.BuildUpdateVoteDurationRequest(setting.VoteId, setting.Duration);
-            UpdateVoteDurationResponse updateVoteDurationResponse = await client.UpdateVoteDurationAsync(updateVoteDurationRequest);
-            if (updateVoteDurationResponse.Status.Code != Code.Success)
+
+            try
+            {
+                if (_setting.IsInsecure)
+                {
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                }
+                GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
+                ylcc.ylccClient client = new ylcc.ylccClient(channel);
+                YlccProtocol protocol = new YlccProtocol();
+                UpdateVoteDurationRequest updateVoteDurationRequest = protocol.BuildUpdateVoteDurationRequest(_setting.VoteId, _setting.Duration);
+                UpdateVoteDurationResponse updateVoteDurationResponse = await client.UpdateVoteDurationAsync(updateVoteDurationRequest);
+                if (updateVoteDurationResponse.Status.Code != Code.Success)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("通信エラー\n");
+                    sb.Append("URI:" + _setting.Uri + "\n");
+                    sb.Append("VideoId:" + _setting.VideoId + "\n");
+                    sb.Append("Reason:" + updateVoteDurationResponse.Status.Message + "\n");
+                    MessageBox.Show(sb.ToString());
+                }
+            }
+            catch (Exception err)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("通信エラー\n");
-                sb.Append("URI:" + setting.URI + "\n");
-                sb.Append("VideoId:" + setting.VideoId + "\n");
-                sb.Append("Reason:" + updateVoteDurationResponse.Status.Message + "\n");
+                sb.Append("エラー\n");
+                sb.Append("URI:" + _setting.Uri + "\n");
+                sb.Append("VideoId:" + _setting.VideoId + "\n");
+                sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
-                this.Close();
-                return;
             }
+
         }
 
         private void UpdateVoteDurationClick(object sender, RoutedEventArgs e)
         {
             UpdateVoteDurationClick();
-
+ 
         }
 
         private async void GetVoteResult()
         {
-            if (!opened)
+            if (!_opened)
             {
                 return;
             }
-            if (setting.VoteId == null || setting.VoteId == "")
+            if (_setting.VoteId == null || _setting.VoteId == "")
             {
                 return;
             }
-            GrpcChannel channel = GrpcChannel.ForAddress(setting.URI);
-            ylcc.ylccClient client = new ylcc.ylccClient(channel);
-            YlccProtocol protocol = new YlccProtocol();
-            GetVoteResultRequest getVoteResultRequest = protocol.BuildGetVoteResultRequest(setting.VoteId);
-            GetVoteResultResponse getVoteResultResponse = await client.GetVoteResultAsync(getVoteResultRequest);
-            if (getVoteResultResponse.Status.Code != Code.Success)
+            try
+            {
+                if (_setting.IsInsecure)
+                {
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                }
+                GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
+                ylcc.ylccClient client = new ylcc.ylccClient(channel);
+                YlccProtocol protocol = new YlccProtocol();
+                GetVoteResultRequest getVoteResultRequest = protocol.BuildGetVoteResultRequest(_setting.VoteId);
+                GetVoteResultResponse getVoteResultResponse = await client.GetVoteResultAsync(getVoteResultRequest);
+                if (getVoteResultResponse.Status.Code != Code.Success)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("通信エラー\n");
+                    sb.Append("URI:" + _setting.Uri + "\n");
+                    sb.Append("VideoId:" + _setting.VideoId + "\n");
+                    sb.Append("Reason:" + getVoteResultResponse.Status.Message + "\n");
+                    MessageBox.Show(sb.ToString());
+                    return;
+                }
+                _setting.Total = getVoteResultResponse.Total;
+                _setting.Counts = getVoteResultResponse.Counts;
+            }
+            catch (Exception err)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("通信エラー\n");
-                sb.Append("URI:" + setting.URI + "\n");
-                sb.Append("VideoId:" + setting.VideoId + "\n");
-                sb.Append("Reason:" + getVoteResultResponse.Status.Message + "\n");
+                sb.Append("エラー\n");
+                sb.Append("URI:" + _setting.Uri + "\n");
+                sb.Append("VideoId:" + _setting.VideoId + "\n");
+                sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
-                this.Close();
-                return;
             }
-            setting.Total = getVoteResultResponse.Total;
-            setting.Counts = getVoteResultResponse.Counts;
-
         }
 
         private void GetVoteResultClick(object sender, RoutedEventArgs e)
@@ -177,35 +230,46 @@ namespace ylcVoteClinet
 
         private async void CloseVote()
         {
-            if (!opened)
+            if (!_opened)
             {
                 return;
             }
-            if (setting.VoteId == null || setting.VoteId == "")
+            if (_setting.VoteId == null || _setting.VoteId == "")
             {
                 return;
             }
-            if (setting.IsInsecure)
+            try
             {
-                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                if (_setting.IsInsecure)
+                {
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                }
+                GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
+                ylcc.ylccClient client = new ylcc.ylccClient(channel);
+                YlccProtocol protocol = new YlccProtocol();
+                CloseVoteRequest closeVoteRequest = protocol.BuildCloseVoteRequest(_setting.VoteId);
+                CloseVoteResponse closeVoteResponse = await client.CloseVoteAsync(closeVoteRequest);
+                if (closeVoteResponse.Status.Code != Code.Success)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("通信エラー\n");
+                    sb.Append("URI:" + _setting.Uri + "\n");
+                    sb.Append("VideoId:" + _setting.VideoId + "\n");
+                    sb.Append("VoteId:" + _setting.VideoId + "\n");
+                    sb.Append("Reason:" + closeVoteResponse.Status.Message + "\n");
+                    MessageBox.Show(sb.ToString());
+                }
             }
-            GrpcChannel channel = GrpcChannel.ForAddress(setting.URI);
-            ylcc.ylccClient client = new ylcc.ylccClient(channel);
-            YlccProtocol protocol = new YlccProtocol();
-            CloseVoteRequest closeVoteRequest = protocol.BuildCloseVoteRequest(setting.VoteId);
-            CloseVoteResponse closeVoteResponse = await client.CloseVoteAsync(closeVoteRequest);
-            if (closeVoteResponse.Status.Code != Code.Success)
+            catch (Exception err)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("通信エラー\n");
-                sb.Append("URI:" + setting.URI + "\n");
-                sb.Append("VideoId:" + setting.VideoId + "\n");
-                sb.Append("VoteId:" + setting.VideoId + "\n");
-                sb.Append("Reason:" + closeVoteResponse.Status.Message + "\n");
+                sb.Append("エラー\n");
+                sb.Append("URI:" + _setting.Uri + "\n");
+                sb.Append("VideoId:" + _setting.VideoId + "\n");
+                sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
-                this.Close();
             }
-            opened = false;
+            _opened = false;
         }
 
         private void CloseVoteClick(object sender, RoutedEventArgs e)
@@ -217,6 +281,5 @@ namespace ylcVoteClinet
         {
             CloseVote();
         }
-
     }
 }

@@ -17,13 +17,22 @@ namespace ylcVoteClinet
     /// </summary>
     public partial class ViewWindow : Window
     {
-        private Setting setting;
+        //private Setting _setting;
 
         public ViewWindow(Setting setting)
         {
             InitializeComponent();
-            this.setting = setting;
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BackgroundColor);
+            System.Windows.Media.Color mColor = System.Windows.Media.Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            Background = new SolidColorBrush(mColor);
+
+            //Label l = new Label();
+            //l.Content = "test";
+            //ViewGrid.Children.Add(l);
+
         }
+
+
 
     }
 }
