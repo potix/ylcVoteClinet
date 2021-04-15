@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using ylccProtocol;
 
@@ -15,11 +16,7 @@ namespace ylcVoteClinet
 
     public class ChoiceItem
     {
-        public string Label { get; set; }
-        public ChoiceItem()
-        {
-
-        }
+        public string Choice { get; set; }
     }
 
     public class Setting
@@ -39,6 +36,10 @@ namespace ylcVoteClinet
 
         public bool IsInsecure { get; set; }
 
+        public int Total { get; set; }
+
+        public Collection<VoteCount> Counts { get; set; }
+
         public Setting()
         {
             ChoiceItems = new ObservableCollection<ChoiceItem>();
@@ -49,8 +50,17 @@ namespace ylcVoteClinet
             TargetValues.Add(new TargetValue { Label = "owner and moderator", Target = Target.OwnerModerator });
             TargetValue = defaultTargetValue;
             Duration = 5;
-            URI = "127.0.0.1:12345";
+            URI = "http://127.0.0.1:12345";
             IsInsecure = true;
+            Total = 0;
+            Counts = null;
+        }
+
+        public void Dump()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("");
+            Debug.Print(sb.ToString());
         }
     }
 }

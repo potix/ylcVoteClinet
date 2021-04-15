@@ -17,7 +17,7 @@
         <Button Content="追加" HorizontalAlignment="Left" Margin="374,41,0,0" VerticalAlignment="Top"  Height="52" Width="42" Click="AddChoiceButtonClick" />
         <DataGrid Name="ChoicesDataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="138" Margin="10,98,0,0" VerticalAlignment="Top" Width="406" CanUserAddRows="False"  CanUserSortColumns="False" ItemsSource="{Binding ChoiceItems}" >
             <DataGrid.Columns>
-                <DataGridTextColumn  Width="320"  Header="選択肢" Binding="{Binding Label, NotifyOnSourceUpdated=True}" />
+                <DataGridTextColumn  Width="320"  Header="選択肢" Binding="{Binding Choice, NotifyOnSourceUpdated=True}" />
                 <DataGridTemplateColumn Width="*" Header="操作">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -39,7 +39,7 @@
         <Label Content="URI" HorizontalAlignment="Left" Height="29" Margin="12,307,0,0" VerticalAlignment="Top" Width="72"/>
         <TextBox Name="URITextBox" Text="{Binding URI}" HorizontalAlignment="Left" Margin="84,307,0,0"  TextWrapping="Wrap" VerticalAlignment="Top" Width="182" Height="29"/>
 
-        <CheckBox Name="InsecureCheckBox" Content="Insecure" Margin="271,307,120,68" VerticalContentAlignment="Center" Height="29" Width="69" IsChecked="{Binding IsInsecure}"/>
+        <CheckBox Name="InsecureCheckBox" Content="Insecure" VerticalContentAlignment="Center"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="271,307,0,0"   IsChecked="{Binding IsInsecure}" Height="29" />
 
         <Button Content="投票開始" HorizontalAlignment="Left" Height="28" Margin="10,346,0,0" VerticalAlignment="Top" Width="54" Click="OpenVoteClick" RenderTransformOrigin="0.519,1.501"/>
         <Button Content="時間延長" HorizontalAlignment="Left" Margin="69,346,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="UpdateVoteDurationClick"/>
