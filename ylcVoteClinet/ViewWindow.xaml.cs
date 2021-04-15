@@ -17,9 +17,13 @@ namespace ylcVoteClinet
     /// </summary>
     public partial class ViewWindow : Window
     {
-        public ViewWindow()
+        private Setting setting;
+
+        public ViewWindow(Setting setting)
         {
             InitializeComponent();
+            this.setting = setting;
         }
+
     }
 }

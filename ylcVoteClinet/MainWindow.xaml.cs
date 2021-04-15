@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.Data;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using ylccProtocol;
+using Grpc.Net.Client;
 
 namespace ylcVoteClinet
 {
@@ -22,97 +24,92 @@ namespace ylcVoteClinet
     /// Interaction logic for MainWindow.xaml
     /// </summary>
 
-    public class ChoicesItem
-    {
-        public string ChoicesText { get; set; }
-    }
 
     public partial class MainWindow : Window
     {
-
-        private ObservableCollection<ChoicesItem> ChoicesItems { get; set; } = new ObservableCollection<ChoicesItem>();
-        private string latestChaoiceText;
-
+        private Setting setting = new Setting();
 
         public MainWindow()
         {
             InitializeComponent();
-            choicesDataGrid.DataContext = ChoicesItems;
-            durationLabel.Content = durationSlider.Value.ToString() + "分";
-
+            VideoIdTextBox.DataContext = setting;
+            ChoicesDataGrid.DataContext = setting;
+            TargetComboBox.DataContext = setting;
+            DurationSlider.DataContext = setting;
+            DurationLabel.DataContext = setting;
         }
 
-        private void updateChoicesView()
+        private void AddChoiceButtonClick(object sender, RoutedEventArgs e)
         {
-          
-        }
-
-        private void AddClick(object sender, RoutedEventArgs e)
-        {
-            if (choicesTextBox.Text == null || choicesTextBox.Text == "") {
+            if (ChoicesTextBox.Text == null || ChoicesTextBox.Text == "")
+            {
                 return;
             }
-            ChoicesItems.Add(new ChoicesItem()
+            setting.ChoiceItems.Add(new ChoiceItem() { Label = ChoicesTextBox.Text });
+        }
+
+        private void ChoiceRemove(object sender, RoutedEventArgs e)
+        {
+            if (ChoicesDataGrid.SelectedIndex == -1)
             {
-                ChoicesText = choicesTextBox.Text,
-            });
-            choicesTextBox.Text = "";
-            updateChoicesView();
-        }
-
-        private void VoteStartClick(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void VoteEndClick(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void ExtendDurationClick(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void GetResultClick(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
-
-        private void DurationChanged(object sender, RoutedEventArgs e)
-        {
-            durationLabel.Content = durationSlider.Value.ToString() + "分";
-        }
-
-
-        private void ChoicesPreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
-        {
-            latestChaoiceText = ((TextBox)e.EditingElement).Text;
-        }
-
-
-        private void ChoicesCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            string v = ((TextBox)e.EditingElement).Text;
-            if (v == null || v == "")
-            {
-                e.Cancel = true;
-                ((TextBox)e.EditingElement).Text = latestChaoiceText;
                 return;
             }
-            updateChoicesView();
+            setting.ChoiceItems.Remove(setting.ChoiceItems[ChoicesDataGrid.SelectedIndex]);
+            ChoicesDataGrid.SelectedIndex = -1;
         }
 
-        private void ChoicesDataGridRemove(object sender, RoutedEventArgs e)
+        private void OpenVoteClick(object sender, RoutedEventArgs e)
         {
-            if (choicesDataGrid.SelectedIndex == -1)
-            {
-                return;
-            } 
-            ChoicesItems.Remove(ChoicesItems[choicesDataGrid.SelectedIndex]);
-            choicesDataGrid.SelectedIndex = -1;
+
+            ViewWindow viewWindow = new ViewWindow(setting);
+            viewWindow.Closed += ViewWindowCloseEventHandler;
+            viewWindow.Show();
         }
+
+        private void UpdateVoteDurationClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GetVoteResultClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void CloseVote()
+        {
+            if (setting.IsInsecure)
+            {
+                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            }
+            GrpcChannel channel = GrpcChannel.ForAddress(setting.URI);
+            ylcc.ylccClient client = new ylcc.ylccClient(channel);
+            YlccProtocol protocol = new YlccProtocol();
+            CloseVoteRequest closeVoteRequest = protocol.BuildCloseVoteRequestRequest(setting.VoteId);
+            StartCollectionWordCloudMessagesResponse startCollectionWordCloudMessagesResponse = await client.StartCollectionWordCloudMessagesAsync(startCollectionWordCloudMessagesRequest);
+            if (startCollectionWordCloudMessagesResponse.Status.Code != Code.Success && startCollectionWordCloudMessagesResponse.Status.Code != Code.InProgress)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("通信エラー\n");
+                sb.Append("URI:" + setting.URI + "\n");
+                sb.Append("VideoId:" + setting.VideoId + "\n");
+                sb.Append("Reason:" + startCollectionWordCloudMessagesResponse.Status.Message + "\n");
+                MessageBox.Show(sb.ToString());
+                this.Close();
+                return;
+            }
+
+        }
+
+        private void CloseVoteClick(object sender, RoutedEventArgs e)
+        {
+            CloseVote();
+        }
+
+        private void ViewWindowCloseEventHandler(object sender, EventArgs e)
+        {
+            CloseVote();
+        }
+
     }
 }
