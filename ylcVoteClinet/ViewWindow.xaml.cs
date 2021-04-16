@@ -26,8 +26,6 @@ namespace ylcVoteClinet
 
     public partial class ViewWindow : Window
     {
-        private readonly int _fontsize = 16;
-        private readonly int _padding = 32;
 
         public ViewWindow(Setting setting)
         {
@@ -54,24 +52,24 @@ namespace ylcVoteClinet
             foreach (var choiceItem in setting.Choices)
             {
                 string[] liners = choiceItem.Text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-                int height = ((liners.Length + 4) * _fontsize) + (_padding * 2);
+                int height = ((liners.Length + 4) * setting.FontSize) + (setting.Padding * 2);
                 if (boxHeight < height)
                 {
                     boxHeight = height;
                 }
                 foreach (var liner in liners)
                 {
-                    int width = (liner.Length * _fontsize) + (_padding * 2);
+                    int width = (liner.Length * setting.FontSize) + (setting.Padding * 2);
                     if (boxWidth < width)
                     {
                         boxWidth = width;
                     }
                 }
             }
-            int windowWidth = (boxWidth * maxCols) + (_padding * (maxCols - 1)) + (_padding * 2);
-            int windowHeight = (boxHeight * rows) + (_padding * (rows - 1)) + (_padding * 2);
-            Width = windowWidth + _padding;
-            Height = windowHeight + (_padding * 2);
+            int windowWidth = (boxWidth * maxCols) + (setting.Padding * (maxCols - 1)) + (setting.Padding * 2);
+            int windowHeight = (boxHeight * rows) + (setting.Padding * (rows - 1)) + (setting.Padding * 2);
+            Width = windowWidth + setting.Padding;
+            Height = windowHeight + (setting.Padding * 2);
 
             if (setting.Results == null)
             {
@@ -118,7 +116,7 @@ namespace ylcVoteClinet
             TextBox textBox = new TextBox();
             textBox.SetBinding(TextBox.TextProperty, "Text");
             textBox.DataContext = choice;
-            textBox.FontSize = _fontsize;
+            textBox.FontSize = setting.FontSize;
             textBox.BorderThickness = new Thickness(0);
             Color mColor = Color.FromArgb(0, 0, 0, 0);
             textBox.Background = new SolidColorBrush(mColor);
@@ -140,7 +138,7 @@ namespace ylcVoteClinet
             border.Height = boxHeight;
             border.HorizontalAlignment = HorizontalAlignment.Left;
             border.VerticalAlignment = VerticalAlignment.Top;
-            border.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            border.Margin = new Thickness((boxWidth * colPos) + (setting.Padding * colPos) + setting.Padding, (boxHeight * rowPos) + (setting.Padding * rowPos) + setting.Padding, 0, 0);
             border.Child = textBox;
             ViewGrid.Children.Add(border);
         }
@@ -149,11 +147,11 @@ namespace ylcVoteClinet
         {
             TextBox textBox = new TextBox();
             textBox.Text = (idx + 1).ToString() + ".";
-            textBox.FontSize = _fontsize * 1.5;
+            textBox.FontSize = setting.FontSize * 1.5;
             textBox.BorderThickness = new Thickness(0);
             textBox.HorizontalAlignment = HorizontalAlignment.Left;
             textBox.VerticalAlignment = VerticalAlignment.Top;
-            textBox.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            textBox.Margin = new Thickness((boxWidth * colPos) + (setting.Padding * colPos) + setting.Padding, (boxHeight * rowPos) + (setting.Padding * rowPos) + setting.Padding + 4, 0, 0);
             Color mColor = Color.FromArgb(0, 0, 0, 0);
             textBox.Background = new SolidColorBrush(mColor);
             System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
@@ -170,11 +168,11 @@ namespace ylcVoteClinet
         {
             TextBox textBox = new TextBox();
             textBox.Text = choiceAndResult.Rate.ToString() + "%";
-            textBox.FontSize = _fontsize * 1.5;
+            textBox.FontSize = setting.FontSize * 1.5;
             textBox.BorderThickness = new Thickness(0);
             textBox.HorizontalAlignment = HorizontalAlignment.Left;
             textBox.VerticalAlignment = VerticalAlignment.Top;
-            textBox.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            textBox.Margin = new Thickness((boxWidth * colPos) + (setting.Padding * colPos) + setting.Padding, (boxHeight * rowPos) + (setting.Padding * rowPos) + setting.Padding - 8, 0, 0);
             Color mColor = Color.FromArgb(0, 0, 0, 0);
             textBox.Background = new SolidColorBrush(mColor);
             System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);

@@ -43,15 +43,26 @@
 
         <Label Content="WindowBackground" HorizontalAlignment="Left" Height="29" Margin="10,342,0,0" VerticalAlignment="Top" Width="116"/>
         <TextBox Name="WindowBackgroundColorTextBox" HorizontalAlignment="Left" Margin="132,341,0,0" Text="{Binding WindowBackgroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" Height="30"/>
+        <Border Name="WindowBackgroundColorBorder" Background="{Binding WindowBackgroundColor}" BorderBrush="#000000"  BorderThickness="1" HorizontalAlignment="Left" Height="29" Margin="226,342,0,0"  VerticalAlignment="Top" Width="29"/>
 
         <Label Content="BoxForeground" HorizontalAlignment="Left" Height="29" Margin="10,377,0,0" VerticalAlignment="Top" Width="116"/>
         <TextBox Name="BoxForegroundColorTextBox" HorizontalAlignment="Left" Margin="132,376,0,0" Text="{Binding BoxForegroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
+        <Border Name="BoxForegroundColorBorder" Background="{Binding BoxForegroundColor}" BorderBrush="#000000"  BorderThickness="1" HorizontalAlignment="Left" Height="29" Margin="226,377,0,0"  VerticalAlignment="Top" Width="29"/>
 
         <Label Content="BoxBackground" HorizontalAlignment="Left" Height="29" Margin="10,412,0,0" VerticalAlignment="Top" Width="116"/>
         <TextBox Name="BoxBackgroundColorTextBox" HorizontalAlignment="Left" Margin="132,411,0,0" Text="{Binding BoxBackgroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
+        <Border Name="BoxBackgroundColorBorder" Background="{Binding BoxBackgroundColor}" BorderBrush="#000000"  BorderThickness="1" HorizontalAlignment="Left" Height="29" Margin="226,412,0,0"  VerticalAlignment="Top" Width="29"/>
 
         <Label Content="BoxBorderColor" HorizontalAlignment="Left" Height="29" Margin="10,447,0,0" VerticalAlignment="Top" Width="116"/>
         <TextBox Name="BoxBorderColorTextBox" HorizontalAlignment="Left" Margin="132,446,0,0" Text="{Binding BoxBorderColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
+        <Border Name="BoxBorderColorBorder" Background="{Binding BoxBorderColor}" BorderBrush="#000000"  BorderThickness="1" HorizontalAlignment="Left" Height="29" Margin="226,447,0,0"  VerticalAlignment="Top" Width="30"/>
+
+        <Label Content="FontSize" HorizontalAlignment="Left" Margin="271,342,0,0" VerticalAlignment="Top" Height="29" Width="60"/>
+        <TextBox Name="FontSizeTextBox" HorizontalAlignment="Left" Margin="336,342,0,0" Text="{Binding FontSize}" TextWrapping="Wrap" VerticalAlignment="Top" Width="62" Height="29"/>
+
+        <Label Content="Padding" HorizontalAlignment="Left" Margin="271,377,0,0" VerticalAlignment="Top" Height="29" Width="60"/>
+        <TextBox Name="PaddingTextBox" HorizontalAlignment="Left" Margin="336,376,0,0" Text="{Binding Padding}" TextWrapping="Wrap" VerticalAlignment="Top" Width="62" Height="29"/>
+
 
         <Button Content="投票開始" HorizontalAlignment="Left" Height="28" Margin="10,481,0,0" VerticalAlignment="Top" Width="54" Click="OpenVoteClick" RenderTransformOrigin="0.519,1.501"/>
         <Button Content="時間延長" HorizontalAlignment="Left" Margin="69,481,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="UpdateVoteDurationClick"/>

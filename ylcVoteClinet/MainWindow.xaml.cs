@@ -43,9 +43,15 @@ namespace ylcVoteClinet
             URITextBox.DataContext = _setting;
             InsecureCheckBox.DataContext = _setting;
             WindowBackgroundColorTextBox.DataContext = _setting;
+            WindowBackgroundColorBorder.DataContext = _setting;
             BoxForegroundColorTextBox.DataContext = _setting;
+            BoxForegroundColorBorder.DataContext = _setting;
             BoxBackgroundColorTextBox.DataContext = _setting;
+            BoxBackgroundColorBorder.DataContext = _setting;
             BoxBorderColorTextBox.DataContext = _setting;
+            BoxBorderColorBorder.DataContext = _setting;
+            FontSizeTextBox.DataContext = _setting;
+            PaddingTextBox.DataContext = _setting;
         }
 
         private void AddChoiceButtonClick(object sender, RoutedEventArgs e)

@@ -53,6 +53,10 @@ namespace ylcVoteClinet
         
         public string BoxBorderColor { get; set; }
 
+        public int FontSize { get; set; }
+
+        public int Padding { get; set; }
+
         public int Total { get; set; }
 
         public ObservableCollection<Result> Results { get; set; }
@@ -75,6 +79,8 @@ namespace ylcVoteClinet
             BoxBackgroundColor = "#4169E1";
             BoxBorderColor = "#000080";
             Results = null;
+            FontSize = 20;
+            Padding = 32;
         }
 
         public bool UpdateResults(int total, ICollection<VoteCount> counts)
