@@ -44,7 +44,6 @@ namespace ylcVoteClinet
 
         public bool IsInsecure { get; set; }
 
-        public int Total { get; set; }
 
         public string WindowBackgroundColor { get; set; }
         
@@ -53,6 +52,8 @@ namespace ylcVoteClinet
         public string BoxBackgroundColor { get; set; }
         
         public string BoxBorderColor { get; set; }
+
+        public int Total { get; set; }
 
         public ObservableCollection<Result> Results { get; set; }
 
@@ -73,12 +74,12 @@ namespace ylcVoteClinet
             BoxForegroundColor = "#FFFFFF";
             BoxBackgroundColor = "#4169E1";
             BoxBorderColor = "#000080";
-            Results = new ObservableCollection<Result>();
+            Results = null;
         }
 
         public void UpdateResults(int total, ICollection<VoteCount> counts)
         {
-            Results.Clear();
+            Results = new ObservableCollection<Result>();
             foreach (VoteCount count in counts)
             {
                 Results.Add(new Result() { Count = count.Count, Rate = (double)count.Count * 100.0 / (double)total });

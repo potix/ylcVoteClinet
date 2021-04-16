@@ -18,6 +18,15 @@ namespace ylcVoteClinet
     /// </summary>
     /// 
 
+    public class ChoiceAndResult
+    {
+        public string Choice { get; set; }
+
+        public int Count { get; set; }
+
+        public double Rate { get; set; }
+    }
+
     public partial class ViewWindow : Window
     {
         private readonly int _fontsize = 16;
@@ -33,7 +42,6 @@ namespace ylcVoteClinet
             System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.WindowBackgroundColor);
             Color mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
             Background = new SolidColorBrush(mColor);
-
             int maxCols = 4;
             if (setting.ChoiceItems.Count <= 4)
             {
@@ -68,11 +76,19 @@ namespace ylcVoteClinet
             Width = windowWidth + _padding;
             Height = windowHeight + (_padding * 2);
 
+            if (setting.Results == null)
+            {
+                RenderChoices(setting, maxCols, windowWidth, windowHeight);
+            } else
+            {
+                RenderChoicesAndResults(setting, maxCols, windowWidth, windowHeight);
+            }
 
+        }
+
+        public void RenderChoices(Setting setting, int maxCols, int boxWidth, int boxHeight)
+        {
             int renderIdx = 0;
-
-            //IEnumerable<Result> results = ChoiceItems.Zip(counts, (a, b) => new Result { Count = count, });
-
             foreach (var choiceItem in setting.ChoiceItems)
             {
                 int rowPos = renderIdx / maxCols;
@@ -82,9 +98,9 @@ namespace ylcVoteClinet
                 textBox.DataContext = choiceItem;
                 textBox.FontSize = _fontsize;
                 textBox.BorderThickness = new Thickness(0);
-                mColor = Color.FromArgb(0, 0, 0, 0);
+                Color mColor = Color.FromArgb(0, 0, 0, 0);
                 textBox.Background = new SolidColorBrush(mColor);
-                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+                System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
                 mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
                 textBox.Foreground = new SolidColorBrush(mColor);
                 textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
@@ -108,5 +124,14 @@ namespace ylcVoteClinet
                 renderIdx += 1;
             }
         }
+
+        public void RenderChoicesAndResults(Setting setting, int maxCols, int boxWidth, int boxHeight)
+        {
+            //int renderIdx = 0;
+
+
+        }
+
+
     }
 }
