@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ylcToolClinet"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="ylcVoteClinet" Width="460" Height="460"  >
+        Title="ylcVoteClinet" Width="460" Height="600"  >
     <Grid>
 
         <Label Content="VideoId" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="74"/>
@@ -41,14 +41,22 @@
 
         <CheckBox Name="InsecureCheckBox" Content="Insecure" VerticalContentAlignment="Center"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="271,307,0,0"   IsChecked="{Binding IsInsecure}" Height="29" />
 
-        <Label Content="背景色" HorizontalAlignment="Left" Height="29" Margin="10,342,0,0" VerticalAlignment="Top" Width="72"/>
-        <TextBox Name="BackgroundColorTextBox" HorizontalAlignment="Left" Margin="84,341,0,0" Text="{Binding BackgroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="30"/>
+        <Label Content="WindowBackground" HorizontalAlignment="Left" Height="29" Margin="10,342,0,0" VerticalAlignment="Top" Width="116"/>
+        <TextBox Name="WindowBackgroundColorTextBox" HorizontalAlignment="Left" Margin="132,341,0,0" Text="{Binding WindowBackgroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="87" Height="30"/>
 
+        <Label Content="BoxForeground" HorizontalAlignment="Left" Height="29" Margin="10,377,0,0" VerticalAlignment="Top" Width="116"/>
+        <TextBox Name="BoxForegroundColorTextBox" HorizontalAlignment="Left" Margin="132,376,0,0" Text="{Binding BoxForegroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
 
-        <Button Content="投票開始" HorizontalAlignment="Left" Height="28" Margin="13,376,0,0" VerticalAlignment="Top" Width="54" Click="OpenVoteClick" RenderTransformOrigin="0.519,1.501"/>
-        <Button Content="時間延長" HorizontalAlignment="Left" Margin="72,376,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="UpdateVoteDurationClick"/>
-        <Button Content="結果取得" HorizontalAlignment="Left" Margin="131,376,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="GetVoteResultClick" />
-        <Button Content="投票終了" HorizontalAlignment="Left" Height="28" Margin="190,376,0,0" VerticalAlignment="Top" Width="54" Click="CloseVoteClick"/>
+        <Label Content="BoxBackground" HorizontalAlignment="Left" Height="29" Margin="10,412,0,0" VerticalAlignment="Top" Width="116"/>
+        <TextBox Name="BoxBackgroundColorTextBox" HorizontalAlignment="Left" Margin="132,411,0,0" Text="{Binding BoxBackgroundColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
+
+        <Label Content="BoxBorderColor" HorizontalAlignment="Left" Height="29" Margin="10,447,0,0" VerticalAlignment="Top" Width="116"/>
+        <TextBox Name="BoxBorderColorTextBox" HorizontalAlignment="Left" Margin="132,446,0,0" Text="{Binding BoxBorderColor}" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Height="30"/>
+
+        <Button Content="投票開始" HorizontalAlignment="Left" Height="28" Margin="10,481,0,0" VerticalAlignment="Top" Width="54" Click="OpenVoteClick" RenderTransformOrigin="0.519,1.501"/>
+        <Button Content="時間延長" HorizontalAlignment="Left" Margin="69,481,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="UpdateVoteDurationClick"/>
+        <Button Content="結果取得" HorizontalAlignment="Left" Margin="128,481,0,0" VerticalAlignment="Top" Height="28" Width="54" Click="GetVoteResultClick" />
+        <Button Content="投票終了" HorizontalAlignment="Left" Height="28" Margin="187,481,0,0" VerticalAlignment="Top" Width="54" Click="CloseVoteClick"/>
 
 
     </Grid>

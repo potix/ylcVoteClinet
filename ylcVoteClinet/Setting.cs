@@ -19,6 +19,13 @@ namespace ylcVoteClinet
         public string Choice { get; set; }
     }
 
+    public class Result
+    {
+        public int Count { get; set; }
+
+        public double Rate { get; set; }
+    }
+
     public class Setting
     {
         public string VideoId { get; set; }
@@ -38,9 +45,15 @@ namespace ylcVoteClinet
 
         public int Total { get; set; }
 
-        public ICollection<VoteCount> Counts { get; set; }
+        public string WindowBackgroundColor { get; set; }
+        
+        public string BoxForegroundColor { get; set; }
+        
+        public string BoxBackgroundColor { get; set; }
+        
+        public string BoxBorderColor { get; set; }
 
-        public string BackgroundColor { get; set; }
+        public ObservableCollection<Result> Results { get; set; }
 
         public Setting()
         {
@@ -55,8 +68,20 @@ namespace ylcVoteClinet
             Uri = "http://127.0.0.1:12345";
             IsInsecure = true;
             Total = 0;
-            Counts = null;
-            BackgroundColor = "#FFFFFF";
+            WindowBackgroundColor = "#000000";
+            BoxForegroundColor = "#FFFFFF";
+            BoxBackgroundColor = "#4169E1";
+            BoxBorderColor = "#000080";
+            Results = new ObservableCollection<Result>();
+        }
+
+        public void UpdateResults(int total, ICollection<VoteCount> counts)
+        {
+            Results.Clear();
+            foreach (VoteCount count in counts)
+            {
+                Results.Add(new Result() { Count = count.Count, Rate = (double)count.Count * 100.0 / (double)total });
+            }
         }
 
         public void Dump()

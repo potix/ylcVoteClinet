@@ -28,12 +28,12 @@ namespace ylcVoteClinet
     public partial class MainWindow : Window
     {
         private Setting _setting = new Setting();
-        private bool _opened;
+        private ViewWindow _viewWindow;
 
         public MainWindow()
         {
             InitializeComponent();
-            _opened = false;
+            _viewWindow = null;
             VideoIdTextBox.DataContext = _setting;
             ChoicesDataGrid.DataContext = _setting;
             TargetComboBox.DataContext = _setting;
@@ -41,7 +41,10 @@ namespace ylcVoteClinet
             DurationLabel.DataContext = _setting;
             URITextBox.DataContext = _setting;
             InsecureCheckBox.DataContext = _setting;
-            BackgroundColorTextBox.DataContext = _setting;
+            WindowBackgroundColorTextBox.DataContext = _setting;
+            BoxForegroundColorTextBox.DataContext = _setting;
+            BoxBackgroundColorTextBox.DataContext = _setting;
+            BoxBorderColorTextBox.DataContext = _setting;
         }
 
         private void AddChoiceButtonClick(object sender, RoutedEventArgs e)
@@ -66,7 +69,7 @@ namespace ylcVoteClinet
 
         private async void OpenVote()
         {
-            if (_opened)
+            if (_viewWindow != null)
             {
                 return;
             }
@@ -116,10 +119,11 @@ namespace ylcVoteClinet
                 MessageBox.Show(sb.ToString());
                 return;
             }
-            _opened = true;
             ViewWindow viewWindow = new ViewWindow(_setting);
             viewWindow.Closed += ViewWindowCloseEventHandler;
             viewWindow.Show();
+            viewWindow.Render(_setting);
+            _viewWindow = viewWindow;
         }
 
         private void OpenVoteClick(object sender, RoutedEventArgs e)
@@ -130,7 +134,7 @@ namespace ylcVoteClinet
 
         private async void UpdateVoteDurationClick()
         {
-            if (!_opened)
+            if (_viewWindow == null)
             {
                 return;
             }
@@ -169,7 +173,6 @@ namespace ylcVoteClinet
                 sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
             }
-
         }
 
         private void UpdateVoteDurationClick(object sender, RoutedEventArgs e)
@@ -180,7 +183,7 @@ namespace ylcVoteClinet
 
         private async void GetVoteResult()
         {
-            if (!_opened)
+            if (_viewWindow == null)
             {
                 return;
             }
@@ -209,8 +212,8 @@ namespace ylcVoteClinet
                     MessageBox.Show(sb.ToString());
                     return;
                 }
-                _setting.Total = getVoteResultResponse.Total;
-                _setting.Counts = getVoteResultResponse.Counts;
+                _setting.UpdateResults(_setting.Total, getVoteResultResponse.Counts);
+                _viewWindow.Render(_setting);
             }
             catch (Exception err)
             {
@@ -230,7 +233,7 @@ namespace ylcVoteClinet
 
         private async void CloseVote()
         {
-            if (!_opened)
+            if (_viewWindow == null)
             {
                 return;
             }
@@ -269,7 +272,7 @@ namespace ylcVoteClinet
                 sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
             }
-            _opened = false;
+            _viewWindow = null;
         }
 
         private void CloseVoteClick(object sender, RoutedEventArgs e)

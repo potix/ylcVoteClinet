@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,22 +18,87 @@ namespace ylcVoteClinet
     /// </summary>
     public partial class ViewWindow : Window
     {
-        //private Setting _setting;
+        private readonly int _fontsize = 16;
+        private readonly int _padding = 32;
 
         public ViewWindow(Setting setting)
         {
             InitializeComponent();
-            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BackgroundColor);
-            System.Windows.Media.Color mColor = System.Windows.Media.Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
-            Background = new SolidColorBrush(mColor);
-
-            //Label l = new Label();
-            //l.Content = "test";
-            //ViewGrid.Children.Add(l);
-
         }
 
+        public void Render(Setting setting)
+        {
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.WindowBackgroundColor);
+            Color mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            Background = new SolidColorBrush(mColor);
 
-
+            int maxCols = 4;
+            if (setting.ChoiceItems.Count <= 4)
+            {
+                maxCols = 2;
+            }
+            else if (setting.ChoiceItems.Count <= 9)
+            {
+                maxCols = 3;
+            }
+            int boxWidth = 0;
+            int boxHeight = 0;
+            int rows = ((setting.ChoiceItems.Count - 1) / maxCols) + 1;
+            foreach (var choiceItem in setting.ChoiceItems)
+            {
+                string[] liners = choiceItem.Choice.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                int height = ((liners.Length + 2) * _fontsize) + (_padding * 2);
+                if (boxHeight < height)
+                {
+                    boxHeight = height;
+                }
+                foreach (var liner in liners)
+                {
+                    int width = (liner.Length * _fontsize) + (_padding * 2);
+                    if (boxWidth < width)
+                    {
+                        boxWidth = width;
+                    }
+                }
+            }
+            int windowWidth = (boxWidth * maxCols) + (_padding * (maxCols - 1)) + (_padding * 2);
+            int windowHeight = (boxHeight * rows) + (_padding * (rows - 1)) + (_padding * 2);
+            Width = windowWidth + _padding;
+            Height = windowHeight + (_padding * 2);
+            int renderIdx = 0;
+            foreach (var choiceItem in setting.ChoiceItems)
+            {
+                int rowPos = renderIdx / maxCols;
+                int colPos = renderIdx % maxCols;
+                TextBox textBox = new TextBox();
+                textBox.Text = (renderIdx + 1).ToString() + ".\n" + choiceItem.Choice;
+                textBox.FontSize = _fontsize;
+                textBox.BorderThickness = new Thickness(0);
+                mColor = Color.FromArgb(0, 0, 0, 0);
+                textBox.Background = new SolidColorBrush(mColor);
+                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+                textBox.Foreground = new SolidColorBrush(mColor);
+                textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+                textBox.VerticalContentAlignment = VerticalAlignment.Top;
+                Border border = new Border();
+                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBorderColor);
+                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+                border.BorderBrush = new SolidColorBrush(mColor);
+                border.BorderThickness = new Thickness(5, 5, 5, 5);
+                border.CornerRadius = new CornerRadius(10);
+                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBackgroundColor);
+                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+                border.Background = new SolidColorBrush(mColor);
+                border.Width = boxWidth;
+                border.Height = boxHeight;
+                border.HorizontalAlignment = HorizontalAlignment.Left;
+                border.VerticalAlignment = VerticalAlignment.Top;
+                border.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+                border.Child = textBox;
+                ViewGrid.Children.Add(border);
+                renderIdx += 1;
+            }
+        }
     }
 }

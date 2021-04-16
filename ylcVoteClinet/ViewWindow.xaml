@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ylcVoteClinet"
         mc:Ignorable="d"
         Title="ViewWindow" Height="450" Width="800">
-    <Grid Name="ViewGrid">
 
-    </Grid>
+    <Grid  Name="ViewGrid" />
+
 </Window>
