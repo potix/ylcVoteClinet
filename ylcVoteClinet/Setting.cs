@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using ylccProtocol;
+using System.Windows;
 
 namespace ylcVoteClinet
 {

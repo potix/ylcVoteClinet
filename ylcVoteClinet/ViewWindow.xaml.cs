@@ -16,11 +16,13 @@ namespace ylcVoteClinet
     /// <summary>
     /// ViewWindow.xaml の相互作用ロジック
     /// </summary>
+    /// 
+
     public partial class ViewWindow : Window
     {
         private readonly int _fontsize = 16;
         private readonly int _padding = 32;
-
+    
         public ViewWindow(Setting setting)
         {
             InitializeComponent();
@@ -47,7 +49,7 @@ namespace ylcVoteClinet
             foreach (var choiceItem in setting.ChoiceItems)
             {
                 string[] liners = choiceItem.Choice.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-                int height = ((liners.Length + 2) * _fontsize) + (_padding * 2);
+                int height = ((liners.Length * 2) * _fontsize) + (_padding * 2);
                 if (boxHeight < height)
                 {
                     boxHeight = height;
@@ -65,13 +67,19 @@ namespace ylcVoteClinet
             int windowHeight = (boxHeight * rows) + (_padding * (rows - 1)) + (_padding * 2);
             Width = windowWidth + _padding;
             Height = windowHeight + (_padding * 2);
+
+
             int renderIdx = 0;
+
+            //IEnumerable<Result> results = ChoiceItems.Zip(counts, (a, b) => new Result { Count = count, });
+
             foreach (var choiceItem in setting.ChoiceItems)
             {
                 int rowPos = renderIdx / maxCols;
                 int colPos = renderIdx % maxCols;
                 TextBox textBox = new TextBox();
-                textBox.Text = (renderIdx + 1).ToString() + ".\n" + choiceItem.Choice;
+                textBox.SetBinding(TextBox.TextProperty, "Choice");
+                textBox.DataContext = choiceItem;
                 textBox.FontSize = _fontsize;
                 textBox.BorderThickness = new Thickness(0);
                 mColor = Color.FromArgb(0, 0, 0, 0);
