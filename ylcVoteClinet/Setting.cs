@@ -15,9 +15,9 @@ namespace ylcVoteClinet
         public Target Target { get; set; }
     }
 
-    public class ChoiceItem
+    public class Choice
     {
-        public string Choice { get; set; }
+        public string Text { get; set; }
     }
 
     public class Result
@@ -32,7 +32,7 @@ namespace ylcVoteClinet
         public string VideoId { get; set; }
         public string VoteId { get; set; }
 
-        public ObservableCollection<ChoiceItem> ChoiceItems { get; set; }
+        public ObservableCollection<Choice> Choices { get; set; }
         
         public TargetValue TargetValue { get; set; }
         
@@ -59,7 +59,7 @@ namespace ylcVoteClinet
 
         public Setting()
         {
-            ChoiceItems = new ObservableCollection<ChoiceItem>();
+            Choices = new ObservableCollection<Choice>();
             TargetValues = new ObservableCollection<TargetValue>();
             TargetValue defaultTargetValue = new TargetValue { Label = "all user", Target = Target.AllUser };
             TargetValues.Add(defaultTargetValue);

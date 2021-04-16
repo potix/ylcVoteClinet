@@ -15,9 +15,9 @@
         <Label Content="選択肢" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="74" Height="52" VerticalContentAlignment="Center"/>
         <TextBox Name="ChoicesTextBox" AcceptsReturn="True" HorizontalAlignment="Left" Margin="84,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="285" Height="52" Text=""/>
         <Button Content="追加" HorizontalAlignment="Left" Margin="374,41,0,0" VerticalAlignment="Top"  Height="52" Width="42" Click="AddChoiceButtonClick" />
-        <DataGrid Name="ChoicesDataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="138" Margin="10,98,0,0" VerticalAlignment="Top" Width="406" CanUserAddRows="False"  CanUserSortColumns="False" ItemsSource="{Binding ChoiceItems}" >
+        <DataGrid Name="ChoicesDataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="138" Margin="10,98,0,0" VerticalAlignment="Top" Width="406" CanUserAddRows="False"  CanUserSortColumns="False" ItemsSource="{Binding Choices}" >
             <DataGrid.Columns>
-                <DataGridTextColumn  Width="320"  Header="選択肢" Binding="{Binding Choice, NotifyOnSourceUpdated=True}" />
+                <DataGridTextColumn  Width="320"  Header="選択肢" Binding="{Binding Text, NotifyOnSourceUpdated=True}" />
                 <DataGridTemplateColumn Width="*" Header="操作">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

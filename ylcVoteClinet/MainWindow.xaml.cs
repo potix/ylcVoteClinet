@@ -53,7 +53,7 @@ namespace ylcVoteClinet
             {
                 return;
             }
-            _setting.ChoiceItems.Add(new ChoiceItem() { Choice = ChoicesTextBox.Text });
+            _setting.Choices.Add(new Choice() { Text = ChoicesTextBox.Text });
         }
 
         private void ChoiceRemove(object sender, RoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace ylcVoteClinet
             {
                 return;
             }
-            _setting.ChoiceItems.Remove(_setting.ChoiceItems[ChoicesDataGrid.SelectedIndex]);
+            _setting.Choices.Remove(_setting.Choices[ChoicesDataGrid.SelectedIndex]);
             ChoicesDataGrid.SelectedIndex = -1;
         }
 
@@ -77,7 +77,7 @@ namespace ylcVoteClinet
             {
                 return;
             }
-            if (_setting.ChoiceItems.Count == 0)
+            if (_setting.Choices.Count == 0)
             {
                 return;
             }
@@ -92,8 +92,9 @@ namespace ylcVoteClinet
                 ylcc.ylccClient client = new ylcc.ylccClient(channel);
                 YlccProtocol protocol = new YlccProtocol();
                 Collection<VoteChoice> choices = new Collection<VoteChoice>();
-                foreach (var choiceItem in _setting.ChoiceItems) {
-                    choices.Add(new VoteChoice() { Label = (choices.Count + 1).ToString(), Choice = choiceItem.Choice });
+                foreach (var choiceItem in _setting.Choices) {
+                    int idx = _setting.Choices.IndexOf(choiceItem);
+                    choices.Add(new VoteChoice() { Label = (idx + 1).ToString(), Choice = choiceItem.Text });
                 }
                 OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(_setting.VideoId, _setting.TargetValue.Target, _setting.Duration, choices);
                 OpenVoteResponse openVoteResponse = await client.OpenVoteAsync(openVoteRequest);

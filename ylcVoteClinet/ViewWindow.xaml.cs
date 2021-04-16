@@ -43,21 +43,21 @@ namespace ylcVoteClinet
             Color mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
             Background = new SolidColorBrush(mColor);
             int maxCols = 4;
-            if (setting.ChoiceItems.Count <= 4)
+            if (setting.Choices.Count <= 4)
             {
                 maxCols = 2;
             }
-            else if (setting.ChoiceItems.Count <= 9)
+            else if (setting.Choices.Count <= 9)
             {
                 maxCols = 3;
             }
             int boxWidth = 0;
             int boxHeight = 0;
-            int rows = ((setting.ChoiceItems.Count - 1) / maxCols) + 1;
-            foreach (var choiceItem in setting.ChoiceItems)
+            int rows = ((setting.Choices.Count - 1) / maxCols) + 1;
+            foreach (var choiceItem in setting.Choices)
             {
-                string[] liners = choiceItem.Choice.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-                int height = ((liners.Length * 2) * _fontsize) + (_padding * 2);
+                string[] liners = choiceItem.Text.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                int height = ((liners.Length + 4) * _fontsize) + (_padding * 2);
                 if (boxHeight < height)
                 {
                     boxHeight = height;
@@ -78,24 +78,24 @@ namespace ylcVoteClinet
 
             if (setting.Results == null)
             {
-                RenderChoices(setting, maxCols, windowWidth, windowHeight);
+                RenderChoices(setting, maxCols, boxWidth, boxHeight);
             } else
             {
-                RenderChoicesAndResults(setting, maxCols, windowWidth, windowHeight);
+                RenderChoicesAndResults(setting, maxCols, boxWidth, boxHeight);
             }
 
         }
 
         public void RenderChoices(Setting setting, int maxCols, int boxWidth, int boxHeight)
         {
-            int renderIdx = 0;
-            foreach (var choiceItem in setting.ChoiceItems)
+            foreach (var choice in setting.Choices)
             {
-                int rowPos = renderIdx / maxCols;
-                int colPos = renderIdx % maxCols;
+                int idx = setting.Choices.IndexOf(choice);
+                int rowPos = idx / maxCols;
+                int colPos = idx % maxCols;
                 TextBox textBox = new TextBox();
-                textBox.SetBinding(TextBox.TextProperty, "Choice");
-                textBox.DataContext = choiceItem;
+                textBox.SetBinding(TextBox.TextProperty, "Text");
+                textBox.DataContext = choice;
                 textBox.FontSize = _fontsize;
                 textBox.BorderThickness = new Thickness(0);
                 Color mColor = Color.FromArgb(0, 0, 0, 0);
@@ -121,7 +121,6 @@ namespace ylcVoteClinet
                 border.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
                 border.Child = textBox;
                 ViewGrid.Children.Add(border);
-                renderIdx += 1;
             }
         }
 
