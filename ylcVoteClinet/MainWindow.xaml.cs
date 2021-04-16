@@ -61,6 +61,7 @@ namespace ylcVoteClinet
                 return;
             }
             _setting.Choices.Add(new Choice() { Text = ChoicesTextBox.Text });
+            ChoicesTextBox.Text = "";
         }
 
         private void ChoiceRemove(object sender, RoutedEventArgs e)

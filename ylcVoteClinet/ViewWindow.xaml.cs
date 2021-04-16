@@ -69,7 +69,7 @@ namespace ylcVoteClinet
             int windowWidth = (boxWidth * maxCols) + (setting.Padding * (maxCols - 1)) + (setting.Padding * 2);
             int windowHeight = (boxHeight * rows) + (setting.Padding * (rows - 1)) + (setting.Padding * 2);
             Width = windowWidth + setting.Padding;
-            Height = windowHeight + (setting.Padding * 2);
+            Height = windowHeight + setting.Padding;
 
             if (setting.Results == null)
             {
@@ -88,8 +88,9 @@ namespace ylcVoteClinet
                 int idx = setting.Choices.IndexOf(choice);
                 int rowPos = idx / maxCols;
                 int colPos = idx % maxCols;
-                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choice, rowPos, colPos);
+                _renderBackgroudBox(setting, maxCols, boxWidth, boxHeight, rowPos, colPos);
                 _renderIndexBox(setting, maxCols, boxWidth, boxHeight, choice, idx, rowPos, colPos);
+                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choice, rowPos, colPos);
             }
         }
 
@@ -104,30 +105,19 @@ namespace ylcVoteClinet
                 Debug.Print(choiceAndResult.Rate.ToString());
                 int rowPos = idx / maxCols;
                 int colPos = idx % maxCols;
-                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, rowPos, colPos);
+                _renderBackgroudBox(setting, maxCols, boxWidth, boxHeight, rowPos, colPos);
                 _renderIndexBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, idx, rowPos, colPos);
                 _renderResultBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, rowPos, colPos);
+                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, rowPos, colPos);
                 idx += 1;
             }
         }
 
-        private void _renderChoiceBox(Setting setting, int maxCols, int boxWidth, int boxHeight, Choice choice, int rowPos, int colPos)
+        private void _renderBackgroudBox(Setting setting, int maxCols, int boxWidth, int boxHeight, int rowPos, int colPos)
         {
-            TextBox textBox = new TextBox();
-            textBox.SetBinding(TextBox.TextProperty, "Text");
-            textBox.DataContext = choice;
-            textBox.FontSize = setting.FontSize;
-            textBox.BorderThickness = new Thickness(0);
-            Color mColor = Color.FromArgb(0, 0, 0, 0);
-            textBox.Background = new SolidColorBrush(mColor);
-            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
-            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
-            textBox.Foreground = new SolidColorBrush(mColor);
-            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-            textBox.VerticalContentAlignment = VerticalAlignment.Center;
             Border border = new Border();
-            dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBorderColor);
-            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBorderColor);
+            Color mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
             border.BorderBrush = new SolidColorBrush(mColor);
             border.BorderThickness = new Thickness(5, 5, 5, 5);
             border.CornerRadius = new CornerRadius(10);
@@ -139,8 +129,30 @@ namespace ylcVoteClinet
             border.HorizontalAlignment = HorizontalAlignment.Left;
             border.VerticalAlignment = VerticalAlignment.Top;
             border.Margin = new Thickness((boxWidth * colPos) + (setting.Padding * colPos) + setting.Padding, (boxHeight * rowPos) + (setting.Padding * rowPos) + setting.Padding, 0, 0);
-            border.Child = textBox;
             ViewGrid.Children.Add(border);
+        }
+
+
+        private void _renderChoiceBox(Setting setting, int maxCols, int boxWidth, int boxHeight, Choice choice, int rowPos, int colPos)
+        {
+            TextBox textBox = new TextBox();
+            textBox.SetBinding(TextBox.TextProperty, "Text");
+            textBox.DataContext = choice;
+            textBox.FontSize = setting.FontSize;
+            textBox.BorderThickness = new Thickness(0);
+            textBox.HorizontalAlignment = HorizontalAlignment.Left;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Margin = new Thickness((boxWidth * colPos) + (setting.Padding * colPos) + setting.Padding, (boxHeight * rowPos) + (setting.Padding * rowPos) + setting.Padding, 0, 0);
+            Color mColor = Color.FromArgb(0, 0, 0, 0);
+            textBox.Background = new SolidColorBrush(mColor);
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            textBox.Foreground = new SolidColorBrush(mColor);
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox.VerticalContentAlignment = VerticalAlignment.Center;
+            textBox.Width = boxWidth;
+            textBox.Height = boxHeight;
+            ViewGrid.Children.Add(textBox);
         }
 
         private void _renderIndexBox(Setting setting, int maxCols, int boxWidth, int boxHeight, Choice choice, int idx, int rowPos, int colPos)
@@ -161,6 +173,7 @@ namespace ylcVoteClinet
             textBox.VerticalContentAlignment = VerticalAlignment.Top;
             textBox.Width = boxWidth;
             textBox.Height = boxHeight;
+            textBox.IsReadOnly = true;
             ViewGrid.Children.Add(textBox);
         }
 
@@ -182,6 +195,7 @@ namespace ylcVoteClinet
             textBox.VerticalContentAlignment = VerticalAlignment.Bottom;
             textBox.Width = boxWidth;
             textBox.Height = boxHeight;
+            textBox.IsReadOnly = true;
             ViewGrid.Children.Add(textBox);
         }
     }
