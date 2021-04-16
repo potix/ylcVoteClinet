@@ -77,13 +77,19 @@ namespace ylcVoteClinet
             Results = null;
         }
 
-        public void UpdateResults(int total, ICollection<VoteCount> counts)
+        public bool UpdateResults(int total, ICollection<VoteCount> counts)
         {
+            if (total == 0)
+            {
+                return false;
+            }
+            Total = total;
             Results = new ObservableCollection<Result>();
             foreach (VoteCount count in counts)
             {
-                Results.Add(new Result() { Count = count.Count, Rate = (double)count.Count * 100.0 / (double)total });
+                Results.Add(new Result() { Count = count.Count, Rate = Math.Ceiling((double)count.Count * 100.0 / (double)total * 10) / 10 });
             }
+            return true;
         }
 
         public void Dump()

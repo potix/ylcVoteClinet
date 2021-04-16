@@ -27,8 +27,9 @@ namespace ylcVoteClinet
 
     public partial class MainWindow : Window
     {
-        private Setting _setting = new Setting();
+        private readonly Setting _setting = new Setting();
         private ViewWindow _viewWindow;
+        private readonly int _minutes = 60;
 
         public MainWindow()
         {
@@ -96,7 +97,7 @@ namespace ylcVoteClinet
                     int idx = _setting.Choices.IndexOf(choiceItem);
                     choices.Add(new VoteChoice() { Label = (idx + 1).ToString(), Choice = choiceItem.Text });
                 }
-                OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(_setting.VideoId, _setting.TargetValue.Target, _setting.Duration, choices);
+                OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(_setting.VideoId, _setting.TargetValue.Target, _setting.Duration * _minutes, choices);
                 OpenVoteResponse openVoteResponse = await client.OpenVoteAsync(openVoteRequest);
                 if (openVoteResponse.Status.Code != Code.Success)
                 {
@@ -153,7 +154,7 @@ namespace ylcVoteClinet
                 GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
                 ylcc.ylccClient client = new ylcc.ylccClient(channel);
                 YlccProtocol protocol = new YlccProtocol();
-                UpdateVoteDurationRequest updateVoteDurationRequest = protocol.BuildUpdateVoteDurationRequest(_setting.VoteId, _setting.Duration);
+                UpdateVoteDurationRequest updateVoteDurationRequest = protocol.BuildUpdateVoteDurationRequest(_setting.VoteId, _setting.Duration * _minutes);
                 UpdateVoteDurationResponse updateVoteDurationResponse = await client.UpdateVoteDurationAsync(updateVoteDurationRequest);
                 if (updateVoteDurationResponse.Status.Code != Code.Success)
                 {
@@ -163,7 +164,9 @@ namespace ylcVoteClinet
                     sb.Append("VideoId:" + _setting.VideoId + "\n");
                     sb.Append("Reason:" + updateVoteDurationResponse.Status.Message + "\n");
                     MessageBox.Show(sb.ToString());
+                    return;
                 }
+                MessageBox.Show("投票時間を延長しました");
             }
             catch (Exception err)
             {
@@ -213,8 +216,11 @@ namespace ylcVoteClinet
                     MessageBox.Show(sb.ToString());
                     return;
                 }
-                _setting.UpdateResults(_setting.Total, getVoteResultResponse.Counts);
-                _viewWindow.Render(_setting);
+                bool ok = _setting.UpdateResults(getVoteResultResponse.Total, getVoteResultResponse.Counts);
+                if (ok)
+                {
+                    _viewWindow.Render(_setting);
+                }
             }
             catch (Exception err)
             {
@@ -273,6 +279,7 @@ namespace ylcVoteClinet
                 sb.Append("Reason:" + err.Message + "\n");
                 MessageBox.Show(sb.ToString());
             }
+            MessageBox.Show("投票を終了しました");
             _viewWindow = null;
         }
 

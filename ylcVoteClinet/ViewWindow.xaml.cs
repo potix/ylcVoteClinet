@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,12 +19,8 @@ namespace ylcVoteClinet
     /// </summary>
     /// 
 
-    public class ChoiceAndResult
+    public class ChoiceAndResult : Choice
     {
-        public string Choice { get; set; }
-
-        public int Count { get; set; }
-
         public double Rate { get; set; }
     }
 
@@ -31,7 +28,7 @@ namespace ylcVoteClinet
     {
         private readonly int _fontsize = 16;
         private readonly int _padding = 32;
-    
+
         public ViewWindow(Setting setting)
         {
             InitializeComponent();
@@ -78,59 +75,116 @@ namespace ylcVoteClinet
 
             if (setting.Results == null)
             {
-                RenderChoices(setting, maxCols, boxWidth, boxHeight);
-            } else
-            {
-                RenderChoicesAndResults(setting, maxCols, boxWidth, boxHeight);
+                _renderChoices(setting, maxCols, boxWidth, boxHeight);
             }
-
+            else
+            {
+                _renderChoicesAndResults(setting, maxCols, boxWidth, boxHeight);
+            }
         }
 
-        public void RenderChoices(Setting setting, int maxCols, int boxWidth, int boxHeight)
+        public void _renderChoices(Setting setting, int maxCols, int boxWidth, int boxHeight)
         {
             foreach (var choice in setting.Choices)
             {
                 int idx = setting.Choices.IndexOf(choice);
                 int rowPos = idx / maxCols;
                 int colPos = idx % maxCols;
-                TextBox textBox = new TextBox();
-                textBox.SetBinding(TextBox.TextProperty, "Text");
-                textBox.DataContext = choice;
-                textBox.FontSize = _fontsize;
-                textBox.BorderThickness = new Thickness(0);
-                Color mColor = Color.FromArgb(0, 0, 0, 0);
-                textBox.Background = new SolidColorBrush(mColor);
-                System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
-                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
-                textBox.Foreground = new SolidColorBrush(mColor);
-                textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
-                textBox.VerticalContentAlignment = VerticalAlignment.Top;
-                Border border = new Border();
-                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBorderColor);
-                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
-                border.BorderBrush = new SolidColorBrush(mColor);
-                border.BorderThickness = new Thickness(5, 5, 5, 5);
-                border.CornerRadius = new CornerRadius(10);
-                dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBackgroundColor);
-                mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
-                border.Background = new SolidColorBrush(mColor);
-                border.Width = boxWidth;
-                border.Height = boxHeight;
-                border.HorizontalAlignment = HorizontalAlignment.Left;
-                border.VerticalAlignment = VerticalAlignment.Top;
-                border.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
-                border.Child = textBox;
-                ViewGrid.Children.Add(border);
+                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choice, rowPos, colPos);
+                _renderIndexBox(setting, maxCols, boxWidth, boxHeight, choice, idx, rowPos, colPos);
             }
         }
 
-        public void RenderChoicesAndResults(Setting setting, int maxCols, int boxWidth, int boxHeight)
+        public void _renderChoicesAndResults(Setting setting, int maxCols, int boxWidth, int boxHeight)
         {
-            //int renderIdx = 0;
-
-
+            IEnumerable<ChoiceAndResult> choiceAndResults = setting.Choices.Zip(setting.Results, (choice, result) => new ChoiceAndResult() { Text = choice.Text, Rate = result.Rate });
+            Debug.Print(choiceAndResults.Count().ToString());
+            int idx = 0;
+            foreach (ChoiceAndResult choiceAndResult in choiceAndResults) 
+            {
+                Debug.Print(choiceAndResult.Text);
+                Debug.Print(choiceAndResult.Rate.ToString());
+                int rowPos = idx / maxCols;
+                int colPos = idx % maxCols;
+                _renderChoiceBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, rowPos, colPos);
+                _renderIndexBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, idx, rowPos, colPos);
+                _renderResultBox(setting, maxCols, boxWidth, boxHeight, choiceAndResult, rowPos, colPos);
+                idx += 1;
+            }
         }
 
+        private void _renderChoiceBox(Setting setting, int maxCols, int boxWidth, int boxHeight, Choice choice, int rowPos, int colPos)
+        {
+            TextBox textBox = new TextBox();
+            textBox.SetBinding(TextBox.TextProperty, "Text");
+            textBox.DataContext = choice;
+            textBox.FontSize = _fontsize;
+            textBox.BorderThickness = new Thickness(0);
+            Color mColor = Color.FromArgb(0, 0, 0, 0);
+            textBox.Background = new SolidColorBrush(mColor);
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            textBox.Foreground = new SolidColorBrush(mColor);
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox.VerticalContentAlignment = VerticalAlignment.Center;
+            Border border = new Border();
+            dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBorderColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            border.BorderBrush = new SolidColorBrush(mColor);
+            border.BorderThickness = new Thickness(5, 5, 5, 5);
+            border.CornerRadius = new CornerRadius(10);
+            dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxBackgroundColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            border.Background = new SolidColorBrush(mColor);
+            border.Width = boxWidth;
+            border.Height = boxHeight;
+            border.HorizontalAlignment = HorizontalAlignment.Left;
+            border.VerticalAlignment = VerticalAlignment.Top;
+            border.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            border.Child = textBox;
+            ViewGrid.Children.Add(border);
+        }
 
+        private void _renderIndexBox(Setting setting, int maxCols, int boxWidth, int boxHeight, Choice choice, int idx, int rowPos, int colPos)
+        {
+            TextBox textBox = new TextBox();
+            textBox.Text = (idx + 1).ToString() + ".";
+            textBox.FontSize = _fontsize * 1.5;
+            textBox.BorderThickness = new Thickness(0);
+            textBox.HorizontalAlignment = HorizontalAlignment.Left;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            Color mColor = Color.FromArgb(0, 0, 0, 0);
+            textBox.Background = new SolidColorBrush(mColor);
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            textBox.Foreground = new SolidColorBrush(mColor);
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox.VerticalContentAlignment = VerticalAlignment.Top;
+            textBox.Width = boxWidth;
+            textBox.Height = boxHeight;
+            ViewGrid.Children.Add(textBox);
+        }
+
+        private void _renderResultBox(Setting setting, int maxCols, int boxWidth, int boxHeight, ChoiceAndResult choiceAndResult, int rowPos, int colPos)
+        {
+            TextBox textBox = new TextBox();
+            textBox.Text = choiceAndResult.Rate.ToString() + "%";
+            textBox.FontSize = _fontsize * 1.5;
+            textBox.BorderThickness = new Thickness(0);
+            textBox.HorizontalAlignment = HorizontalAlignment.Left;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Margin = new Thickness((boxWidth * colPos) + (_padding * colPos) + _padding, (boxHeight * rowPos) + (_padding * rowPos) + _padding, 0, 0);
+            Color mColor = Color.FromArgb(0, 0, 0, 0);
+            textBox.Background = new SolidColorBrush(mColor);
+            System.Drawing.Color dColor = System.Drawing.ColorTranslator.FromHtml(setting.BoxForegroundColor);
+            mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
+            textBox.Foreground = new SolidColorBrush(mColor);
+            textBox.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox.VerticalContentAlignment = VerticalAlignment.Bottom;
+            textBox.Width = boxWidth;
+            textBox.Height = boxHeight;
+            ViewGrid.Children.Add(textBox);
+        }
     }
 }
