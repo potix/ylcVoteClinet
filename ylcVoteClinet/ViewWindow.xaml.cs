@@ -38,7 +38,15 @@ namespace ylcVoteClinet
             Color mColor = Color.FromArgb(dColor.A, dColor.R, dColor.G, dColor.B);
             Background = new SolidColorBrush(mColor);
             int maxCols = 4;
-            if (setting.Choices.Count <= 4)
+            if (setting.Choices.Count <= 2)
+            {
+                maxCols = 2;
+            }
+            else if (setting.Choices.Count <= 3)
+            {
+                maxCols = 3;
+            }
+            else if (setting.Choices.Count <= 4)
             {
                 maxCols = 2;
             }
