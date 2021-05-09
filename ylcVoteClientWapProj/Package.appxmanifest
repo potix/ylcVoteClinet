@@ -9,7 +9,7 @@
   <Identity
     Name="4185ba99-d05c-415b-854f-c3f0ddf6b55f"
     Publisher="CN=Hiroyuki"
-    Version="1.0.1.0" />
+    Version="1.0.3.0" />
 
   <Properties>
     <DisplayName>ylcVoteClientWapProj</DisplayName>

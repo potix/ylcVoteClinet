@@ -29,6 +29,8 @@ namespace ylcVoteClinet
 
     public class Setting
     {
+        private readonly YlccProtocol protocol = new YlccProtocol();
+
         public string VideoId { get; set; }
         public string VoteId { get; set; }
 

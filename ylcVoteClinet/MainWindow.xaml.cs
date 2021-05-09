@@ -30,6 +30,7 @@ namespace ylcVoteClinet
         private readonly Setting _setting = new Setting();
         private ViewWindow _viewWindow;
         private readonly int _minutes = 60;
+        private readonly YlccProtocol protocol = new YlccProtocol();
 
         public MainWindow()
         {
@@ -102,7 +103,7 @@ namespace ylcVoteClinet
                 Collection<VoteChoice> choices = new Collection<VoteChoice>();
                 foreach (var choiceItem in _setting.Choices) {
                     int idx = _setting.Choices.IndexOf(choiceItem);
-                    choices.Add(new VoteChoice() { Label = (idx + 1).ToString(), Choice = choiceItem.Text });
+                    choices.Add(protocol.BuildVoteCoice((idx + 1).ToString(), choiceItem.Text));
                 }
                 OpenVoteRequest openVoteRequest = protocol.BuildOpenVoteRequest(_setting.VideoId, _setting.TargetValue.Target, _setting.Duration * _minutes, choices);
                 OpenVoteResponse openVoteResponse = await client.OpenVoteAsync(openVoteRequest);
@@ -160,7 +161,6 @@ namespace ylcVoteClinet
                 }
                 GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
                 ylcc.ylccClient client = new ylcc.ylccClient(channel);
-                YlccProtocol protocol = new YlccProtocol();
                 UpdateVoteDurationRequest updateVoteDurationRequest = protocol.BuildUpdateVoteDurationRequest(_setting.VoteId, _setting.Duration * _minutes);
                 UpdateVoteDurationResponse updateVoteDurationResponse = await client.UpdateVoteDurationAsync(updateVoteDurationRequest);
                 if (updateVoteDurationResponse.Status.Code != Code.Success)
@@ -210,7 +210,6 @@ namespace ylcVoteClinet
                 }
                 GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
                 ylcc.ylccClient client = new ylcc.ylccClient(channel);
-                YlccProtocol protocol = new YlccProtocol();
                 GetVoteResultRequest getVoteResultRequest = protocol.BuildGetVoteResultRequest(_setting.VoteId);
                 GetVoteResultResponse getVoteResultResponse = await client.GetVoteResultAsync(getVoteResultRequest);
                 if (getVoteResultResponse.Status.Code != Code.Success)
@@ -263,7 +262,6 @@ namespace ylcVoteClinet
                 }
                 GrpcChannel channel = GrpcChannel.ForAddress(_setting.Uri);
                 ylcc.ylccClient client = new ylcc.ylccClient(channel);
-                YlccProtocol protocol = new YlccProtocol();
                 CloseVoteRequest closeVoteRequest = protocol.BuildCloseVoteRequest(_setting.VoteId);
                 CloseVoteResponse closeVoteResponse = await client.CloseVoteAsync(closeVoteRequest);
                 if (closeVoteResponse.Status.Code != Code.Success)
